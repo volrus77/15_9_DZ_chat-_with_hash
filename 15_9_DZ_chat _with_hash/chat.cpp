@@ -79,7 +79,6 @@ int Chat::hash_func(Login _login, int offset) {
     //return (sum % mem_size + offset * f2) % mem_size;
 }
 
-
 void Chat::resize() {
     
     Pair* save = data; // запоминаем старый массив
@@ -101,6 +100,35 @@ void Chat::resize() {
     delete[] save;
 }
 
+bool Chat::del(Login _login, char _pass[], int pass_length) {
+
+    int index = -1, i = 0;
+    // берем пробы по всем i от 0 до размера массива
+    for (; i < mem_size; i++) {
+        index = hash_func(_login, i);
+        if (data[index].status == enPairStatus::engaged && std::strcmp(data[index].login, _login) == 0)
+        {
+            uint* pass_sha1_ha = sha1(_pass, pass_length); //находим хеш пароля
+            for (int j = 0; j < SHA1HASHLENGTHUINTS; ++j)
+            {
+                if (data[index].pass_sha1_hash[j] != pass_sha1_ha[j]) // если хеши не равны
+                {
+                    delete[] pass_sha1_ha;
+                    return false;
+                }
+            }
+            delete[] pass_sha1_ha;
+            data[index].status = enPairStatus::deleted;
+            data_count--;
+            return true;   // если хеши равны
+        }
+        if (data[index].status == enPairStatus::free && std::strcmp(data[index].login, _login))
+            return false;  // дошли до free, далее не будет, поэтому останавливаемся
+    }
+    return false;
+}
+
+   
 
 // возвращаем указатель на хеш пароля
 //uint* Chat::find(Login _login) {
@@ -118,3 +146,65 @@ void Chat::resize() {
 //    return -1;*/
 //}
 
+void test(Chat& chat)
+{
+
+    Login login;
+    std::cout << "Enter login :";
+    std::cin >> login;
+    Password password;
+    std::cout << "Enter password :";
+    std::cin >> password;
+    chat.reg(login, password, strlen(password));
+
+
+    Login login1;
+    std::cout << "Enter login :";
+    std::cin >> login1;
+    Password password1;
+    std::cout << "Enter password :";
+    std::cin >> password1;
+    chat.reg(login1, password1, strlen(password1));
+
+
+    //Login login2;
+    //std::cout << "Enter login :";
+    //std::cin >> login2;
+    //Password password2;
+    //std::cout << "Enter password :";
+    //std::cin >> password2;
+
+
+    //if (chat.login(login2, password2, strlen(password2)))
+    //	std::cout << "true" << std::endl;
+    //else
+    //	std::cout << "false" << std::endl;
+
+    Login login3;
+    std::cout << "Enter login :";
+    std::cin >> login3;
+    Password password3;
+    std::cout << "Enter password :";
+    std::cin >> password3;
+
+
+    if (chat.del(login3, password3, strlen(password3)))
+        std::cout << "true" << std::endl;
+    else
+        std::cout << "false" << std::endl;
+
+
+    Login login4;
+    std::cout << "Enter login :";
+    std::cin >> login4;
+    Password password4;
+    std::cout << "Enter password :";
+    std::cin >> password4;
+
+
+    if (chat.login(login4, password4, strlen(password4)))
+        std::cout << "true" << std::endl;
+    else
+        std::cout << "false" << std::endl;
+
+}

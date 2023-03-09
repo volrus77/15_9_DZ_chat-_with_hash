@@ -17,9 +17,10 @@ public:
     void reg(Login _login, char _pass[], int pass_length);
     bool login(Login _login, char _pass[], int pass_length);
     void resize();
+    bool del(Login _login, char _pass[], int pass_length);
     //uint* find(Login _login);
 
-    ///friend void test(Chat& c);
+    friend void test(Chat& c);
 private:
     enum enPairStatus {
         free,
@@ -64,3 +65,6 @@ private:
     int mem_size;  // размер массива пар
     int data_count;  // число зарегистрированных пользователей
 };    
+
+
+
