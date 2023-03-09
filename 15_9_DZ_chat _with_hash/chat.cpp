@@ -14,9 +14,9 @@ Chat::~Chat()
     delete[] data;
 }
 
-void Chat::reg(char _login[LOGINLENGTH], char _pass[], int pass_length) {
+void Chat::reg(Login _login, char _pass[], int pass_length) {
     if (data_count / mem_size > 0.9)
-        ; //resize();
+       resize();
 
     int index = -1, i = 0;
     // берем пробы по всем i от 0 до размера массива
@@ -34,7 +34,7 @@ void Chat::reg(char _login[LOGINLENGTH], char _pass[], int pass_length) {
     }
     if (i >= mem_size) return; // все перебрали, нет места
 }
-bool Chat::login(char _login[LOGINLENGTH], char _pass[], int pass_length) {
+bool Chat::login(Login _login, char _pass[], int pass_length) {
     // Нужно вернуть true в случае успешного логина
     
     int index = -1, i = 0;
@@ -61,11 +61,11 @@ bool Chat::login(char _login[LOGINLENGTH], char _pass[], int pass_length) {
     return false;
 }
 
-int Chat::hash_func(Login login, int offset) {
+int Chat::hash_func(Login _login, int offset) {
     // вычисляем индекс
     int sum = 0, i = 0;
-    for (; i < strlen(login); i++) {
-        sum += login[i];
+    for (; i < strlen(_login); i++) {
+        sum += _login[i];
     }
     // линейные пробы
     //return (sum % mem_size + offset) % mem_size;
@@ -78,3 +78,43 @@ int Chat::hash_func(Login login, int offset) {
     //// проба
     //return (sum % mem_size + offset * f2) % mem_size;
 }
+
+
+void Chat::resize() {
+    
+    Pair* save = data; // запоминаем старый массив
+    int oldSize = mem_size;
+
+    mem_size *= 2;  // увеличиваем размер в два раза  
+    data_count = 0; // обнуляем количество элементов
+    data = new Pair[mem_size]; // создаём новый массив 
+
+    int index = -1;
+    for (int i = 0; i < oldSize; i++)
+    {
+        if (save[i].status == enPairStatus::engaged) {
+            index = hash_func(save[i].login, i);
+            data[index] = Pair(save[i].login, save[i].pass_sha1_hash);
+            data_count++;
+        }
+    }
+    delete[] save;
+}
+
+
+// возвращаем указатель на хеш пароля
+//uint* Chat::find(Login _login) {
+//
+//    /*for (int i = 0; i < mem_size; i++) {
+//        int index = hash_func(fr_name, i);
+//        if (array[index].status == enPairStatus::engaged &&
+//            !strcmp(array[index].fruit_name, fr_name)) {
+//            return array[index].fruit_count;
+//        }
+//        else if (array[index].status == enPairStatus::free) {
+//            return -1;
+//        }
+//    }
+//    return -1;*/
+//}
+
