@@ -9,7 +9,6 @@ int main()
 	test(chat);
 
 
-
 	return 0;
 }
 

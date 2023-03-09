@@ -79,28 +79,46 @@ int Chat::hash_func(Login _login, int offset) {
     //return (sum % mem_size + offset * f2) % mem_size;
 }
 
+// меняет размер в большую или меньшую сторону
+// при  0.3 < (data_count / mem_size) < 0.9
+// массив обновляется, избавляясь от удаленных
 void Chat::resize() {
     
     Pair* save = data; // запоминаем старый массив
     int oldSize = mem_size;
 
+    if (data_count / mem_size > 0.9)
     mem_size *= 2;  // увеличиваем размер в два раза  
+    if (data_count / mem_size < 0.3)
+        mem_size /= 2; // уменьшаем размер в два раза  
+    if (mem_size < 8)
+        mem_size = oldSize;
+
     data_count = 0; // обнуляем количество элементов
     data = new Pair[mem_size]; // создаём новый массив 
 
-    int index = -1;
+    int index = -1,;
     for (int i = 0; i < oldSize; i++)
     {
         if (save[i].status == enPairStatus::engaged) {
-            index = hash_func(save[i].login, i);
-            data[index] = Pair(save[i].login, save[i].pass_sha1_hash);
-            data_count++;
+            for (int j = 0; j < mem_size; j++) {
+                index = hash_func(save[i].login, j);
+                if (data[index].status == enPairStatus::free) {
+                    // найдена пустая ячейка, занимаем ее
+                    data[index] = save[i];
+                    data_count++;
+                    break;
+                }
+            }
         }
     }
     delete[] save;
 }
 
 bool Chat::del(Login _login, char _pass[], int pass_length) {
+
+    if (data_count / mem_size < 0.3)
+        resize();
 
     int index = -1, i = 0;
     // берем пробы по всем i от 0 до размера массива
@@ -122,7 +140,7 @@ bool Chat::del(Login _login, char _pass[], int pass_length) {
             data_count--;
             return true;   // если хеши равны
         }
-        if (data[index].status == enPairStatus::free && std::strcmp(data[index].login, _login))
+        if (data[index].status == enPairStatus::free )
             return false;  // дошли до free, далее не будет, поэтому останавливаемся
     }
     return false;
@@ -148,7 +166,7 @@ bool Chat::del(Login _login, char _pass[], int pass_length) {
 
 void test(Chat& chat)
 {
-
+    // регистрация
     Login login;
     std::cout << "Enter login :";
     std::cin >> login;
@@ -157,7 +175,7 @@ void test(Chat& chat)
     std::cin >> password;
     chat.reg(login, password, strlen(password));
 
-
+    // регистрация
     Login login1;
     std::cout << "Enter login :";
     std::cin >> login1;
@@ -166,20 +184,22 @@ void test(Chat& chat)
     std::cin >> password1;
     chat.reg(login1, password1, strlen(password1));
 
+    // залогиниться
+    Login login2;
+    std::cout << "Enter login :";
+    std::cin >> login2;
+    Password password2;
+    std::cout << "Enter password :";
+    std::cin >> password2;
 
-    //Login login2;
-    //std::cout << "Enter login :";
-    //std::cin >> login2;
-    //Password password2;
-    //std::cout << "Enter password :";
-    //std::cin >> password2;
+
+    if (chat.login(login2, password2, strlen(password2)))
+    	std::cout << "true" << std::endl;
+    else
+    	std::cout << "false" << std::endl;
 
 
-    //if (chat.login(login2, password2, strlen(password2)))
-    //	std::cout << "true" << std::endl;
-    //else
-    //	std::cout << "false" << std::endl;
-
+    // удалить
     Login login3;
     std::cout << "Enter login :";
     std::cin >> login3;
@@ -193,7 +213,7 @@ void test(Chat& chat)
     else
         std::cout << "false" << std::endl;
 
-
+    // залогиниться после удалениядщпшт1
     Login login4;
     std::cout << "Enter login :";
     std::cin >> login4;
