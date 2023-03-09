@@ -1,4 +1,4 @@
-#include "chat.h"
+п»ї#include "chat.h"
 #include "iostream"
 #include "string.h"
 
@@ -19,62 +19,62 @@ void Chat::reg(char _login[LOGINLENGTH], char _pass[], int pass_length) {
         ; //resize();
 
     int index = -1, i = 0;
-    // берем пробы по всем i от 0 до размера массива
+    // Р±РµСЂРµРј РїСЂРѕР±С‹ РїРѕ РІСЃРµРј i РѕС‚ 0 РґРѕ СЂР°Р·РјРµСЂР° РјР°СЃСЃРёРІР°
     for (; i < mem_size; i++) {
         index = hash_func(_login, i);
         if (data[index].status == enPairStatus::free) {
-            // найдена пустая ячейка, занимаем ее
+            // РЅР°Р№РґРµРЅР° РїСѓСЃС‚Р°СЏ СЏС‡РµР№РєР°, Р·Р°РЅРёРјР°РµРј РµРµ
             data[index] = Pair(_login, sha1(_pass, pass_length));
             data_count++;
-            break;  //заняли, останавливаемся
+            break;  //Р·Р°РЅСЏР»Рё, РѕСЃС‚Р°РЅР°РІР»РёРІР°РµРјСЃСЏ
         }
         else
         std::cout << "login is busy" << std::endl;
 
     }
-    if (i >= mem_size) return; // все перебрали, нет места
+    if (i >= mem_size) return; // РІСЃРµ РїРµСЂРµР±СЂР°Р»Рё, РЅРµС‚ РјРµСЃС‚Р°
 }
 bool Chat::login(char _login[LOGINLENGTH], char _pass[], int pass_length) {
-    // Нужно вернуть true в случае успешного логина
+    // РќСѓР¶РЅРѕ РІРµСЂРЅСѓС‚СЊ true РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС€РЅРѕРіРѕ Р»РѕРіРёРЅР°
     
     int index = -1, i = 0;
-    // берем пробы по всем i от 0 до размера массива
+    // Р±РµСЂРµРј РїСЂРѕР±С‹ РїРѕ РІСЃРµРј i РѕС‚ 0 РґРѕ СЂР°Р·РјРµСЂР° РјР°СЃСЃРёРІР°
     for (; i < mem_size; i++) {
         index = hash_func(_login, i);
         if (data[index].status == enPairStatus::engaged && std::strcmp(data[index].login, _login) == 0)
         {
-            uint* pass_sha1_ha = sha1(_pass, pass_length); //находим хеш пароля
+            uint* pass_sha1_ha = sha1(_pass, pass_length); //РЅР°С…РѕРґРёРј С…РµС€ РїР°СЂРѕР»СЏ
             for (int j = 0; j < SHA1HASHLENGTHUINTS; ++j)
             {
-                if (data[index].pass_sha1_hash[j] != pass_sha1_ha[j]) // если хеши не равны
+                if (data[index].pass_sha1_hash[j] != pass_sha1_ha[j]) // РµСЃР»Рё С…РµС€Рё РЅРµ СЂР°РІРЅС‹
                 {
                     delete[] pass_sha1_ha;
                     return false;
                 }
             }
             delete[] pass_sha1_ha;
-            return true;   // если хеши равны
+            return true;   // РµСЃР»Рё С…РµС€Рё СЂР°РІРЅС‹
         }
         if (data[index].status == enPairStatus::free && std::strcmp(data[index].login, _login))
-            return false;  // дошли до free, далее не будет, поэтому останавливаемся
+            return false;  // РґРѕС€Р»Рё РґРѕ free, РґР°Р»РµРµ РЅРµ Р±СѓРґРµС‚, РїРѕСЌС‚РѕРјСѓ РѕСЃС‚Р°РЅР°РІР»РёРІР°РµРјСЃСЏ
     }
     return false;
 }
 
 int Chat::hash_func(Login login, int offset) {
-    // вычисляем индекс
+    // РІС‹С‡РёСЃР»СЏРµРј РёРЅРґРµРєСЃ
     int sum = 0, i = 0;
     for (; i < strlen(login); i++) {
         sum += login[i];
     }
-    // линейные пробы
+    // Р»РёРЅРµР№РЅС‹Рµ РїСЂРѕР±С‹
     //return (sum % mem_size + offset) % mem_size;
 
-    // квадратичные пробы
+    // РєРІР°РґСЂР°С‚РёС‡РЅС‹Рµ РїСЂРѕР±С‹
     return (sum % mem_size + offset * offset) % mem_size;
 
-    // второе хеширование
+    // РІС‚РѕСЂРѕРµ С…РµС€РёСЂРѕРІР°РЅРёРµ
     //int f2 = sum % (mem_size * 2);
-    //// проба
+    //// РїСЂРѕР±Р°
     //return (sum % mem_size + offset * f2) % mem_size;
 }

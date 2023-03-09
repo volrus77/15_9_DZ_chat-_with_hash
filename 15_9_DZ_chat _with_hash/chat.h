@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "sha1.h"
 ///#include "test.h"
@@ -52,13 +52,13 @@ private:
             return *this;
         }
         Login login;
-        uint* pass_sha1_hash;  // хеш пароля
+        uint* pass_sha1_hash;  // С…РµС€ РїР°СЂРѕР»СЏ
 
         enPairStatus status;
     };
-    int hash_func(Login login, int offset);  // для вычисления индекса в массиве
+    int hash_func(Login login, int offset);  // РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РёРЅРґРµРєСЃР° РІ РјР°СЃСЃРёРІРµ
 
-    Pair* data;  //  массив пар( логин, хеш пароля) - основное поле чата
-    int mem_size;  // размер массива пар
-    int data_count;  // число зарегистрированных пользователей
+    Pair* data;  //  РјР°СЃСЃРёРІ РїР°СЂ( Р»РѕРіРёРЅ, С…РµС€ РїР°СЂРѕР»СЏ) - РѕСЃРЅРѕРІРЅРѕРµ РїРѕР»Рµ С‡Р°С‚Р°
+    int mem_size;  // СЂР°Р·РјРµСЂ РјР°СЃСЃРёРІР° РїР°СЂ
+    int data_count;  // С‡РёСЃР»Рѕ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 };    
