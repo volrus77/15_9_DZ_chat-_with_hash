@@ -97,7 +97,7 @@ void Chat::resize() {
     data_count = 0; // обнуляем количество элементов
     data = new Pair[mem_size]; // создаём новый массив 
 
-    int index = -1,;
+    int index = -1;
     for (int i = 0; i < oldSize; i++)
     {
         if (save[i].status == enPairStatus::engaged) {
