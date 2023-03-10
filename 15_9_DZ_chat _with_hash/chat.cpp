@@ -213,7 +213,7 @@ void test(Chat& chat)
     else
         std::cout << "false" << std::endl;
 
-    // залогиниться после удалениядщпшт1
+    // залогиниться после удаления
     Login login4;
     std::cout << "Enter login :";
     std::cin >> login4;

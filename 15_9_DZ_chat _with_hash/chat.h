@@ -18,6 +18,7 @@ public:
     bool login(Login _login, char _pass[], int pass_length);
     void resize();
     bool del(Login _login, char _pass[], int pass_length);
+    
     //uint* find(Login _login);
 
     friend void test(Chat& c);
@@ -55,7 +56,7 @@ private:
             return *this;
         }
         Login login;
-        uint* pass_sha1_hash;  // хеш пароля
+        uint* pass_sha1_hash;  // указатель на хеш пароля
 
         enPairStatus status;
     };
