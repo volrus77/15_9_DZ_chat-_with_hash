@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "sha1.h"
-///#include "test.h"
 #include "string.h"
 
 #define LOGINLENGTH 10
@@ -18,7 +17,7 @@ public:
     bool login(Login _login, char _pass[], int pass_length);
     void resize();
     bool del(Login _login, char _pass[], int pass_length);
-    
+    int countDeleted();
     //uint* find(Login _login);
 
     friend void test(Chat& c);
@@ -66,6 +65,3 @@ private:
     int mem_size;  // размер массива пар
     int data_count;  // число зарегистрированных пользователей
 };    
-
-
-
