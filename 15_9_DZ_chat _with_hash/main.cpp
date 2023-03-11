@@ -16,8 +16,6 @@ int main()
     bool good = false;
     setlocale(LC_CTYPE, "rus");
     try {
-
-
         Chat c;
 
         c.reg((char*)"user1", (char*)"qwerty12345", sizeof("qwerty12345"));

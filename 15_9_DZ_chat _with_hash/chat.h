@@ -15,10 +15,7 @@ public:
 
     void reg(Login _login, char _pass[], int pass_length);
     bool login(Login _login, char _pass[], int pass_length);
-    void resize();
     bool del(Login _login, char _pass[], int pass_length);
-    int countDeleted();
-    //uint* find(Login _login);
 
     friend void test(Chat& c);
 private:
@@ -59,6 +56,8 @@ private:
 
         enPairStatus status;
     };
+
+    void resize();
     int hash_func(Login _login, int offset);  // для вычисления индекса в массиве
 
     Pair* data;  //  массив пар( логин, хеш пароля) - основное поле чата

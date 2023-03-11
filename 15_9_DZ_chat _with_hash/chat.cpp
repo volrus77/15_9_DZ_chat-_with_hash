@@ -15,7 +15,7 @@ Chat::~Chat()
 }
 
 void Chat::reg(Login _login, char _pass[], int pass_length) {
-    
+    std::cout << "reg()" << endl;
     int index = -1, i = 0;
     // берем пробы по всем i от 0 до размера массива
     for (; i < mem_size; i++) {
@@ -43,6 +43,8 @@ bool Chat::login(Login _login, char _pass[], int pass_length) {
         index = hash_func(_login, i);
         if (data[index].status == enPairStatus::engaged && std::strcmp(data[index].login, _login) == 0)
         {
+            std::cout << "Propbs count: " << i + 1 << std::endl;
+
             uint* pass_sha1_ha = sha1(_pass, pass_length); //находим хеш пароля
             for (int j = 0; j < SHA1HASHLENGTHUINTS; ++j)
             {
@@ -73,10 +75,10 @@ int Chat::hash_func(Login _login, int offset) {
     // квадратичные пробы
 
 
-    const double A = 0.7;
-    return (int(mem_size * (A * sum - int(A * sum))) + offset* offset) % mem_size;
+    //const double A = 0.7;
+    //return (int(mem_size * (A * sum - int(A * sum))) + offset* offset) % mem_size;
 
-   //return (sum % mem_size + offset * offset) % mem_size;
+    return (sum % mem_size + offset * offset) % mem_size;
 
     // второе хеширование
     //int f2 = sum % (mem_size * 2);
@@ -88,7 +90,7 @@ int Chat::hash_func(Login _login, int offset) {
 // при  0.3 < (data_count / mem_size) < 0.9
 // массив обновляется, избавляясь от удаленных
 void Chat::resize() {
-    
+    std::cout << "resize()" << endl;
     Pair* save = data; // запоминаем старый массив
     int oldSize = mem_size;
 
@@ -102,7 +104,8 @@ void Chat::resize() {
     for (int i = 0; i < oldSize; i++)
     {
         if (save[i].status == enPairStatus::engaged) {
-            for (int j = 0; j < mem_size; j++) {
+            int j = 0;
+            for (; j < mem_size; j++) {
                 index = hash_func(save[i].login, j);
                 if (data[index].status == enPairStatus::free) {
                     // найдена пустая ячейка, занимаем ее
@@ -111,6 +114,8 @@ void Chat::resize() {
                     break;
                 }
             }
+            if (j >= mem_size)
+                resize();
         }
     }
     delete[] save;
@@ -118,8 +123,8 @@ void Chat::resize() {
 
 bool Chat::del(Login _login, char _pass[], int pass_length) {
 
-    if (data_count / mem_size < 0.3)
-        resize();
+   // if (data_count / mem_size < 0.3)
+      //  resize();
 
     int index = -1, i = 0;
     // берем пробы по всем i от 0 до размера массива
@@ -146,34 +151,6 @@ bool Chat::del(Login _login, char _pass[], int pass_length) {
     }
     return false;
 }
-
-int Chat::countDeleted() {
-    int count = 0;
-    for (int i = 0; i < mem_size; i++)
-    {
-        if (data[i].status == enPairStatus::deleted)
-            count++;
-    }
-    return count;
-}
-
-// возвращаем указатель на хеш пароля
-//uint* Chat::find(Login _login) {
-//
-//    /*for (int i = 0; i < mem_size; i++) {
-//        int index = hash_func(fr_name, i);
-//        if (array[index].status == enPairStatus::engaged &&
-//            !strcmp(array[index].fruit_name, fr_name)) {
-//            return array[index].fruit_count;
-//        }
-//        else if (array[index].status == enPairStatus::free) {
-//            return -1;
-//        }
-//    }
-//    return -1;*/
-//}
-
-
 
 void test(Chat& chat)
 {
